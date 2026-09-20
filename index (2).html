@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TCGaddict</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🃏</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea; --bg-elevated: #ffffff; --bg-soft: #eeeae1;
+    --text: #241d16; --text-muted: #766c5c; --border: rgba(36,29,22,0.10);
+    --shadow: 0 10px 30px rgba(36,29,22,0.08);
+    --accent: #e3350d; --accent-dark: #b8270a; --accent2: #f4c542; --accent2-dark: #d9a520;
+    --green: #1f9d55; --green-bg: rgba(31,157,85,0.12);
+    --loss: #cc3333; --loss-bg: rgba(204,51,51,0.10);
+    --card-bg: #ffffff; --radius: 18px; --radius-sm: 12px;
+    --font-display: 'Fredoka','Poppins',sans-serif; --font-body: 'Poppins',sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#17130f; --bg-elevated:#211a14; --bg-soft:#241d16; --text:#f4ede1; --text-muted:#a99c88;
+      --border: rgba(244,237,225,0.10); --shadow:0 10px 30px rgba(0,0,0,0.4); --card-bg:#241d16;
+      --green-bg: rgba(31,157,85,0.18); --loss-bg: rgba(204,51,51,0.18);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#17130f; --bg-elevated:#211a14; --bg-soft:#241d16; --text:#f4ede1; --text-muted:#a99c88;
+    --border: rgba(244,237,225,0.10); --shadow:0 10px 30px rgba(0,0,0,0.4); --card-bg:#241d16;
+    --green-bg: rgba(31,157,85,0.18); --loss-bg: rgba(204,51,51,0.18);
+  }
+
+  /* ---- Yu-Gi-Oh theme: dark navy/black + gold + purple, applied via [data-game] ---- */
+  html[data-game="yugioh"] {
+    --bg: #0b0710; --bg-elevated: #17101f; --bg-soft: #1f1729;
+    --text: #f1e9d8; --text-muted: #a595b8; --border: rgba(201,162,39,0.18);
+    --shadow: 0 10px 30px rgba(0,0,0,0.55);
+    --accent: #c9a227; --accent-dark: #9c7c15; --accent2: #6b2fb3; --accent2-dark: #4b1f80;
+    --green: #2fbf71; --green-bg: rgba(47,191,113,0.15);
+    --loss: #e04848; --loss-bg: rgba(224,72,72,0.15);
+    --card-bg: #17101f;
+    --font-display: 'Cinzel','Fredoka',serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height:100vh; -webkit-tap-highlight-color: transparent; transition: background .25s ease, color .25s ease; }
+  img { max-width:100%; display:block; }
+  .app { max-width: 1100px; margin:0 auto; padding: 0 16px 100px; }
+
+  header.top {
+    position: sticky; top:0; z-index:30; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color:white; padding: 18px 16px 14px; margin:0 0 18px; border-radius: 0 0 22px 22px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25); transition: background .25s ease;
+  }
+  html[data-game="yugioh"] header.top { color: #f1e9d8; }
+  .top-row { display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto; gap:10px; }
+  .brand { display:flex; align-items:center; gap:10px; min-width:0; }
+  .menu-btn { flex-shrink:0; width:38px; height:38px; border-radius:11px; border:none; background: rgba(255,255,255,0.18); color:#fff; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .game-badge { width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; background: rgba(255,255,255,0.18); }
+  .brand h1 { font-family: var(--font-display); font-size:19px; margin:0; letter-spacing:0.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .brand span.tag { display:block; font-size:11px; opacity:0.85; font-weight:500; margin-top:1px; }
+  .sync-pill { display:flex; align-items:center; gap:6px; background: rgba(255,255,255,0.16); padding:6px 10px; border-radius:999px; font-size:11.5px; font-weight:600; white-space:nowrap; flex-shrink:0; }
+  .dot { width:8px; height:8px; border-radius:50%; background:#5fe38a; box-shadow:0 0 0 3px rgba(95,227,138,0.25); flex-shrink:0; }
+  .dot.off { background:#f4c542; box-shadow:0 0 0 3px rgba(244,197,66,0.25); }
+  .dot.pending { background:#f4c542; animation: pulse 1.3s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .tabs { display:flex; gap:6px; max-width:1100px; margin:14px auto 0; padding:0 16px; }
+  .tab-btn { flex:1; text-align:center; padding:9px 6px; border-radius:999px; background: rgba(255,255,255,0.14); color: rgba(255,255,255,0.85); font-weight:600; font-size:13.5px; border:none; cursor:pointer; }
+  .tab-btn.active { background:#fff; color: var(--accent-dark); }
+  html[data-game="yugioh"] .tab-btn.active { background: var(--accent); color: #0b0710; }
+
+  .cat-tabs { display:flex; gap:8px; margin: 0 0 16px; }
+  .cat-btn { flex:1; text-align:center; padding:10px 8px; border-radius: var(--radius-sm); background: var(--bg-elevated); border:1.5px solid var(--border); color: var(--text-muted); font-weight:700; font-size:13.5px; cursor:pointer; }
+  .cat-btn.active { border-color: var(--accent); color: var(--text); background: var(--bg-soft); }
+
+  #dbWarning { display:none; background:var(--accent2); color:#2a1a00; padding:10px 14px; border-radius:12px; font-size:12.5px; font-weight:600; margin:0 0 14px; line-height:1.4; }
+  html[data-game="yugioh"] #dbWarning { color:#fff2cc; }
+
+  .toolbar { display:flex; gap:10px; margin:4px 0 16px; flex-wrap:wrap; }
+  .search-wrap { position:relative; flex:1; min-width:180px; }
+  .search-wrap input { width:100%; padding:11px 14px 11px 38px; border-radius:12px; border:1px solid var(--border); background: var(--bg-elevated); color: var(--text); font-family: var(--font-body); font-size:14px; }
+  .search-wrap svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5; }
+  select.filter { padding:11px 12px; border-radius:12px; border:1px solid var(--border); background: var(--bg-elevated); color: var(--text); font-family: var(--font-body); font-size:14px; }
+
+  .stats-strip { display:grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-bottom:18px; }
+  .stat-card { background: var(--bg-elevated); border:1px solid var(--border); border-radius: var(--radius-sm); padding:12px 14px; box-shadow: var(--shadow); }
+  .stat-card .label { font-size:11.5px; color: var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
+  .stat-card .value { font-family: var(--font-display); font-size:21px; margin-top:2px; }
+  .stat-card .value.pos { color: var(--green); }
+  .stat-card .value.neg { color: var(--loss); }
+
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(165px,1fr)); gap:14px; }
+  .card { background: var(--card-bg); border-radius: var(--radius); overflow:hidden; border:1px solid var(--border); box-shadow: var(--shadow); display:flex; flex-direction:column; }
+  .card-photo { aspect-ratio:3/4; background: var(--bg-soft); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+  .card-photo img { width:100%; height:100%; object-fit:cover; }
+  .card-photo .placeholder { opacity:0.25; width:44%; }
+  .sold-ribbon { position:absolute; top:9px; right:-28px; transform:rotate(40deg); background: var(--green); color:#fff; font-size:10.5px; font-weight:700; padding:3px 32px; letter-spacing:0.5px; }
+  .qty-badge { position:absolute; bottom:7px; right:7px; background: rgba(0,0,0,0.65); color:#fff; font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; }
+  .card-body { padding:10px 12px 12px; display:flex; flex-direction:column; gap:5px; flex:1; }
+  .card-name { font-weight:700; font-size:14px; line-height:1.25; }
+  .card-ext { font-size:11.5px; color: var(--text-muted); font-weight:500; }
+  .price-line { display:flex; justify-content:space-between; font-size:12.5px; margin-top:2px; }
+  .price-line .k { color: var(--text-muted); }
+  .price-line .v { font-weight:600; }
+  .profit-badge { margin-top:4px; padding:5px 8px; border-radius:9px; font-size:12.5px; font-weight:700; display:flex; justify-content:space-between; align-items:center; }
+  .profit-badge.pos { background: var(--green-bg); color: var(--green); }
+  .profit-badge.neg { background: var(--loss-bg); color: var(--loss); }
+  .profit-badge.neutral { background: var(--bg-soft); color: var(--text-muted); }
+  .psa10-line { font-size:11.5px; color: var(--accent2-dark); font-weight:600; display:flex; gap:4px; align-items:center; }
+  html[data-game="yugioh"] .psa10-line { color: var(--accent); }
+  .card-actions { display:flex; gap:6px; margin-top:8px; }
+  .mini-btn { flex:1; border:none; border-radius:9px; padding:7px 4px; font-size:11.5px; font-weight:600; cursor:pointer; font-family: var(--font-body); }
+  .mini-btn.sell { background: var(--accent2); color:#2a1a00; }
+  html[data-game="yugioh"] .mini-btn.sell { color:#fff; }
+  .mini-btn.edit { background: var(--bg-soft); color: var(--text); }
+  .mini-btn.del { background: var(--loss-bg); color: var(--loss); flex: 0 0 34px; }
+
+  .empty-state { text-align:center; padding:60px 20px; color: var(--text-muted); }
+  .empty-state .big { font-size:44px; margin-bottom:10px; }
+  .empty-state h3 { font-family: var(--font-display); color: var(--text); margin:0 0 6px; }
+
+  .fab { position:fixed; right:20px; bottom:26px; z-index:40; width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color:#fff; font-size:28px; box-shadow:0 10px 24px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; }
+  .fab:active { transform: scale(0.94); }
+
+  .overlay { position:fixed; inset:0; background: rgba(20,15,10,0.55); z-index:50; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition: opacity .18s ease; }
+  .overlay.show { opacity:1; pointer-events:auto; }
+  @media (min-width:640px) { .overlay { align-items:center; } }
+  .modal { background: var(--bg-elevated); width:100%; max-width:480px; max-height:88vh; overflow-y:auto; border-radius:22px 22px 0 0; padding:20px 20px 26px; transform: translateY(30px); transition: transform .2s ease; }
+  @media (min-width:640px) { .modal { border-radius:22px; transform: translateY(0) scale(0.96); } }
+  .overlay.show .modal { transform: translateY(0) scale(1); }
+  .modal h2 { font-family: var(--font-display); margin:0 0 16px; font-size:20px; }
+  .field { margin-bottom:13px; }
+  .field label { display:block; font-size:12.5px; font-weight:600; color: var(--text-muted); margin-bottom:5px; }
+  .field input, .field select, .field textarea { width:100%; padding:11px 12px; border-radius:11px; border:1px solid var(--border); background: var(--bg-soft); color: var(--text); font-family: var(--font-body); font-size:14.5px; }
+  .field textarea { resize:vertical; min-height:54px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .type-toggle { display:flex; gap:8px; }
+  .type-btn { flex:1; padding:10px; border-radius:11px; border:1.5px solid var(--border); background: var(--bg-soft); color: var(--text-muted); font-weight:700; font-size:13.5px; cursor:pointer; }
+  .type-btn.active { border-color: var(--accent); color: var(--text); }
+  .photo-pick { display:flex; align-items:center; gap:12px; padding:10px; border-radius:12px; background: var(--bg-soft); border:1.5px dashed var(--border); cursor:pointer; }
+  .photo-pick .prev { width:52px; height:70px; border-radius:8px; overflow:hidden; background:#ddd; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .photo-pick .prev img { width:100%; height:100%; object-fit:cover; }
+  .photo-pick .txt { font-size:13px; font-weight:600; color: var(--text-muted); }
+  .modal-actions { display:flex; gap:10px; margin-top:18px; }
+  .btn { border:none; border-radius:12px; padding:13px 16px; font-weight:700; font-size:14.5px; cursor:pointer; font-family: var(--font-body); flex:1; }
+  .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color:#fff; }
+  .btn.primary:disabled { opacity:0.6; }
+  .btn.ghost { background: var(--bg-soft); color: var(--text); flex:0 0 auto; }
+  .hint { font-size:11.5px; color: var(--text-muted); margin-top:-6px; margin-bottom:12px; line-height:1.4; }
+
+  .toast { position:fixed; left:50%; bottom:96px; transform: translateX(-50%) translateY(20px); background:#241d16; color:#fff; padding:11px 18px; border-radius:999px; font-size:13.5px; font-weight:600; box-shadow:0 8px 20px rgba(0,0,0,0.3); z-index:60; opacity:0; pointer-events:none; transition: all .25s ease; max-width:88%; text-align:center; }
+  .toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+  ::-webkit-scrollbar { width:8px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius:8px; }
+
+  /* ---- game drawer ---- */
+  .drawer-overlay { position:fixed; inset:0; background: rgba(0,0,0,0.5); z-index:70; opacity:0; pointer-events:none; transition: opacity .2s ease; }
+  .drawer-overlay.show { opacity:1; pointer-events:auto; }
+  .drawer { position:fixed; top:0; left:0; bottom:0; width: 78%; max-width:300px; background: var(--bg-elevated); z-index:71; transform: translateX(-100%); transition: transform .22s ease; box-shadow: 4px 0 24px rgba(0,0,0,0.3); overflow-y:auto; }
+  .drawer-overlay.show .drawer { transform: translateX(0); }
+  .drawer-head { padding: 20px 18px 14px; font-family: var(--font-display); font-size: 19px; color: var(--text); border-bottom:1px solid var(--border); }
+  .drawer-list { padding: 10px; }
+  .drawer-item { display:flex; align-items:center; gap:12px; padding: 13px 12px; border-radius: 12px; cursor:pointer; margin-bottom:4px; }
+  .drawer-item:hover { background: var(--bg-soft); }
+  .drawer-item.active { background: var(--bg-soft); border:1.5px solid var(--accent); }
+  .drawer-item .icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+  .drawer-item .info b { display:block; font-size:14px; }
+  .drawer-item .info span { display:block; font-size:11.5px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="drawer-overlay" id="drawerOverlay">
+  <div class="drawer">
+    <div class="drawer-head">🃏 TCGaddict</div>
+    <div class="drawer-list" id="drawerList"></div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand">
+      <button class="menu-btn" id="menuBtn" title="Changer de jeu">☰</button>
+      <div class="game-badge" id="gameBadge">🔴</div>
+      <h1>TCGaddict<span class="tag" id="syncSub">Chargement…</span></h1>
+    </div>
+    <div class="sync-pill" id="syncPill"><span class="dot" id="syncDot"></span><span id="syncLabel">…</span></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="collection">🗂️ Collection</button>
+    <button class="tab-btn" data-tab="ventes">💰 Ventes</button>
+  </div>
+</header>
+
+<div class="app">
+  <div id="dbWarning">⚠️ Connexion à la base de données impossible. Vérifie ta connexion internet et recharge la page.</div>
+
+  <div class="cat-tabs">
+    <button class="cat-btn active" data-cat="card">🃏 Cartes</button>
+    <button class="cat-btn" data-cat="item">🎁 Objets</button>
+  </div>
+
+  <div id="view-collection">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="searchInput" placeholder="Rechercher…">
+      </div>
+      <select class="filter" id="extFilter"><option value="">Toutes extensions</option></select>
+    </div>
+    <div class="stats-strip" id="collectionStats"></div>
+    <div class="grid" id="collectionGrid"></div>
+    <div class="empty-state" id="collectionEmpty" style="display:none;">
+      <div class="big">🎴</div>
+      <h3>Rien pour l'instant</h3>
+      <p>Appuie sur le bouton pour ajouter ta première carte ou objet.</p>
+    </div>
+  </div>
+
+  <div id="view-ventes" style="display:none;">
+    <div class="stats-strip" id="ventesStats"></div>
+    <div class="grid" id="ventesGrid"></div>
+    <div class="empty-state" id="ventesEmpty" style="display:none;">
+      <div class="big">💸</div>
+      <h3>Aucune vente enregistrée</h3>
+      <p>Marque un élément comme vendu depuis l'onglet Collection pour le voir ici.</p>
+    </div>
+  </div>
+</div>
+
+<button class="fab" id="openAdd" title="Ajouter">＋</button>
+
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <h2 id="formTitle">Ajouter</h2>
+    <div class="field">
+      <label>Type</label>
+      <div class="type-toggle">
+        <button type="button" class="type-btn active" id="typeCardBtn" data-type="card">🃏 Carte</button>
+        <button type="button" class="type-btn" id="typeItemBtn" data-type="item">🎁 Objet</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Photo (depuis ta galerie)</label>
+      <div class="photo-pick" id="photoPick">
+        <div class="prev" id="photoPrev">📷</div>
+        <div class="txt" id="photoTxt">Touche pour choisir une photo</div>
+      </div>
+      <input type="file" accept="image/*" id="photoInput" style="display:none;">
+    </div>
+    <div class="field">
+      <label>Nom</label>
+      <input id="fName" placeholder="ex. Dracaufeu ex">
+    </div>
+    <div class="field">
+      <label>Extension</label>
+      <input id="fExt" placeholder="ex. 151…" list="extSuggest">
+      <datalist id="extSuggest"></datalist>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Prix d'achat (€)</label><input id="fBuy" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+      <div class="field"><label>Quantité</label><input id="fQty" type="number" step="1" min="1" value="1"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Prix du marché (€)</label><input id="fMarket" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+      <div class="field"><label>Estimation PSA10 (€)</label><input id="fPsa10" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+    </div>
+    <div class="hint">Le prix du marché et l'estimation PSA10 se saisissent à la main. La rentabilité se recalcule automatiquement.</div>
+    <div class="field"><label>Notes (optionnel)</label><textarea id="fNotes" placeholder="État, particularités…"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelForm">Annuler</button>
+      <button class="btn primary" id="saveForm">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="sellOverlay">
+  <div class="modal">
+    <h2>Marquer comme vendu</h2>
+    <div class="field"><label>Prix de vente total (€)</label><input id="sPrice" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+    <div class="field"><label>Date de vente</label><input id="sDate" type="date"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelSell">Annuler</button>
+      <button class="btn primary" id="confirmSell">Confirmer la vente</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="deleteOverlay">
+  <div class="modal">
+    <h2>Supprimer ?</h2>
+    <p style="font-size:13.5px; color:var(--text-muted); margin:-6px 0 4px;">Cette action est définitive.</p>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelDelete">Annuler</button>
+      <button class="btn primary" id="confirmDelete" style="background:linear-gradient(135deg,#cc3333,#a02020);">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot,
+  enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBVw4dLAo5NrcLcZdRWJQqL8z6UzfrW89E",
+  authDomain: "tcg-market-b61cf.firebaseapp.com",
+  projectId: "tcg-market-b61cf",
+  storageBucket: "tcg-market-b61cf.firebasestorage.app",
+  messagingSenderId: "456002399526",
+  appId: "1:456002399526:web:9f6db0a321c5fa0d3ea5e7"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+try { await enableIndexedDbPersistence(db); } catch(e) { console.warn('offline persistence not available', e); }
+
+const EUR = new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR' });
+
+const GAMES = {
+  pokemon: {
+    label: 'Pokémon', icon: '🔴', theme: 'pokemon',
+    extensions: ['Écarlate et Violet','Évolutions Prismatiques','151','Flammes Obsidiennes','Fable Nébuleuse','Étincelles Déferlantes','Destinées de Paldea','Épée et Bouclier','Soleil et Lune']
+  },
+  yugioh: {
+    label: 'Yu-Gi-Oh!', icon: '🟣', theme: 'yugioh',
+    extensions: ['Duelist Nexus','Légende de l\'Œil Bleu','Âge de la Destruction','Rage of the Abyss','Ancienne Prophétie','Battles of Legend','Structure Deck','25th Anniversary']
+  }
+};
+
+let cards = {};
+let firstLoadDone = false;
+let dbReady = true;
+let hasPendingWrites = false;
+let editingId = null, sellingId = null, deletingId = null;
+let pendingPhotoDataUrl = null;
+let compressingPhoto = false;
+let currentGame = localStorage.getItem('tcgaddict_game') || 'pokemon';
+if (!GAMES[currentGame]) currentGame = 'pokemon';
+let currentCat = 'card';
+let formType = 'card';
+
+function uid(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+}
+
+let toastTimer = null;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 3400);
+}
+
+function updateSyncUI(){
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  const sub = document.getElementById('syncSub');
+  const warn = document.getElementById('dbWarning');
+  if (!dbReady) {
+    dot.className = 'dot off'; label.textContent = 'Hors service';
+    sub.textContent = 'Connexion impossible';
+    warn.style.display = firstLoadDone ? 'block' : 'none';
+  } else if (hasPendingWrites) {
+    dot.className = 'dot pending'; label.textContent = 'Envoi…';
+    sub.textContent = 'Sera synchronisé au retour du réseau';
+    warn.style.display = 'none';
+  } else {
+    dot.className = 'dot'; label.textContent = 'Synchronisé';
+    sub.textContent = GAMES[currentGame].label;
+    warn.style.display = 'none';
+  }
+}
+
+// ---------- game switching ----------
+function applyGameTheme(){
+  document.documentElement.setAttribute('data-game', GAMES[currentGame].theme);
+  document.getElementById('gameBadge').textContent = GAMES[currentGame].icon;
+  const extList = document.getElementById('extSuggest');
+  extList.innerHTML = GAMES[currentGame].extensions.map(e=>`<option value="${escapeHtml(e)}"></option>`).join('');
+  updateSyncUI();
+}
+function renderDrawer(){
+  const list = document.getElementById('drawerList');
+  list.innerHTML = '';
+  Object.keys(GAMES).forEach(key=>{
+    const g = GAMES[key];
+    const div = document.createElement('div');
+    div.className = 'drawer-item' + (key===currentGame ? ' active' : '');
+    div.innerHTML = `<div class="icon">${g.icon}</div><div class="info"><b>${g.label}</b><span>${key==='pokemon'?'Cartes & objets Pokémon':'Cartes & objets Yu-Gi-Oh!'}</span></div>`;
+    div.addEventListener('click', ()=>{
+      currentGame = key;
+      localStorage.setItem('tcgaddict_game', key);
+      applyGameTheme();
+      renderDrawer();
+      render();
+      closeDrawer();
+    });
+    list.appendChild(div);
+  });
+}
+const drawerOverlay = document.getElementById('drawerOverlay');
+function openDrawer(){ renderDrawer(); drawerOverlay.classList.add('show'); }
+function closeDrawer(){ drawerOverlay.classList.remove('show'); }
+document.getElementById('menuBtn').addEventListener('click', openDrawer);
+drawerOverlay.addEventListener('click', (e)=>{ if (e.target === drawerOverlay) closeDrawer(); });
+
+// ---------- category tabs (Cartes / Objets) ----------
+document.querySelectorAll('.cat-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    render();
+  });
+});
+
+// ---------- live subscription ----------
+const cardsCol = collection(db, 'cards');
+onSnapshot(cardsCol, { includeMetadataChanges: true }, (snap)=>{
+  const fresh = {};
+  snap.forEach(d=>{
+    const data = d.data();
+    if (data && !data.deleted) fresh[d.id] = Object.assign({id: d.id}, data);
+  });
+  hasPendingWrites = snap.metadata.hasPendingWrites;
+  cards = fresh;
+  firstLoadDone = true;
+  dbReady = true;
+  render();
+}, (err)=>{
+  console.warn('snapshot error', err);
+  firstLoadDone = true;
+  dbReady = false;
+  render();
+});
+
+async function saveCardToServer(card){
+  const payload = Object.assign({}, card);
+  delete payload.id;
+  await setDoc(doc(db, 'cards', card.id), payload);
+}
+async function deleteCardOnServer(id){
+  await deleteDoc(doc(db, 'cards', id));
+}
+function errorLabel(e){
+  if (!e) return '';
+  const code = e.code || (e.message ? e.message.slice(0,50) : 'inconnu');
+  return ' (code: ' + code + ')';
+}
+
+// ---------- image compression ----------
+function compressOnce(imgEl, maxDim, quality){
+  let { width, height } = imgEl;
+  if (width > height && width > maxDim) { height = Math.round(height*maxDim/width); width = maxDim; }
+  else if (height > maxDim) { width = Math.round(width*maxDim/height); height = maxDim; }
+  const canvas = document.createElement('canvas');
+  canvas.width = width; canvas.height = height;
+  canvas.getContext('2d').drawImage(imgEl, 0, 0, width, height);
+  return canvas.toDataURL('image/jpeg', quality);
+}
+function loadImageFromFile(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = ()=> resolve(img);
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+const MAX_PHOTO_CHARS = 500000;
+async function compressImageFile(file){
+  const img = await loadImageFromFile(file);
+  const steps = [[1000,0.75],[750,0.65],[550,0.55],[400,0.45]];
+  let out = compressOnce(img, steps[0][0], steps[0][1]);
+  for (let i=1; i<steps.length && out.length > MAX_PHOTO_CHARS; i++){
+    out = compressOnce(img, steps[i][0], steps[i][1]);
+  }
+  return out;
+}
+
+function profitPotential(card){
+  if (card.marketPrice == null || card.purchasePrice == null) return null;
+  return (Number(card.marketPrice) - Number(card.purchasePrice)) * (Number(card.quantity)||1);
+}
+function saleProfit(card){
+  if (card.soldPrice == null || card.purchasePrice == null) return null;
+  return Number(card.soldPrice) - (Number(card.purchasePrice) * (Number(card.quantity)||1));
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function placeholderSvg(){
+  return '<svg class="placeholder" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3a15 15 0 010 18 15 15 0 010-18z" stroke="currentColor" stroke-width="1.6"/></svg>';
+}
+
+const grid = document.getElementById('collectionGrid');
+const emptyEl = document.getElementById('collectionEmpty');
+const ventesGrid = document.getElementById('ventesGrid');
+const ventesEmpty = document.getElementById('ventesEmpty');
+
+function cardEl(card, mode){
+  const div = document.createElement('div');
+  div.className = 'card';
+  const src = card.photo || null;
+  const profit = mode === 'ventes' ? saleProfit(card) : profitPotential(card);
+  let badgeHtml = '<div class="profit-badge neutral"><span>Rentabilité</span><span>—</span></div>';
+  if (profit != null) {
+    const cls = profit >= 0 ? 'pos' : 'neg';
+    const label = mode === 'ventes' ? 'Bénéfice' : 'Rentabilité';
+    const sign = profit >= 0 ? '+' : '';
+    badgeHtml = `<div class="profit-badge ${cls}"><span>${label}</span><span>${sign}${EUR.format(profit)}</span></div>`;
+  }
+  const psa10Html = card.psa10Price != null && card.psa10Price !== ''
+    ? `<div class="psa10-line">🏆 PSA10 est. ${EUR.format(Number(card.psa10Price))}</div>` : '';
+
+  div.innerHTML = `
+    <div class="card-photo">
+      ${src ? `<img src="${src}" alt="${escapeHtml(card.name||'')}">` : placeholderSvg()}
+      ${card.status==='vendu' ? '<div class="sold-ribbon">VENDU</div>' : ''}
+      ${(card.quantity && Number(card.quantity)>1) ? `<div class="qty-badge">×${card.quantity}</div>` : ''}
+    </div>
+    <div class="card-body">
+      <div class="card-name">${escapeHtml(card.name||'Sans nom')}</div>
+      <div class="card-ext">${escapeHtml(card.extension||'—')}</div>
+      <div class="price-line"><span class="k">Achat</span><span class="v">${card.purchasePrice!=null? EUR.format(Number(card.purchasePrice)) : '—'}</span></div>
+      <div class="price-line"><span class="k">${mode==='ventes' ? 'Vendu' : 'Marché'}</span><span class="v">${mode==='ventes' ? (card.soldPrice!=null? EUR.format(Number(card.soldPrice)):'—') : (card.marketPrice!=null? EUR.format(Number(card.marketPrice)):'—')}</span></div>
+      ${badgeHtml}
+      ${psa10Html}
+      <div class="card-actions"></div>
+    </div>
+  `;
+  const actions = div.querySelector('.card-actions');
+  if (mode !== 'ventes') {
+    const sellBtn = document.createElement('button');
+    sellBtn.className = 'mini-btn sell'; sellBtn.textContent = 'Vendre 💰';
+    sellBtn.onclick = ()=> openSell(card.id);
+    const editBtn = document.createElement('button');
+    editBtn.className = 'mini-btn edit'; editBtn.textContent = 'Modifier';
+    editBtn.onclick = ()=> openEdit(card.id);
+    const delBtn = document.createElement('button');
+    delBtn.className = 'mini-btn del'; delBtn.textContent = '🗑';
+    delBtn.onclick = ()=> deleteCard(card.id);
+    actions.append(editBtn, sellBtn, delBtn);
+  } else {
+    const editBtn = document.createElement('button');
+    editBtn.className = 'mini-btn edit'; editBtn.textContent = 'Détails';
+    editBtn.onclick = ()=> openEdit(card.id);
+    const delBtn = document.createElement('button');
+    delBtn.className = 'mini-btn del'; delBtn.textContent = '🗑';
+    delBtn.onclick = ()=> deleteCard(card.id);
+    actions.append(editBtn, delBtn);
+  }
+  return div;
+}
+
+function gameOf(c){ return c.game || 'pokemon'; }
+function typeOf(c){ return c.itemType || 'card'; }
+
+function populateExtFilter(list){
+  const sel = document.getElementById('extFilter');
+  const current = sel.value;
+  const exts = Array.from(new Set(list.map(c=>c.extension).filter(Boolean))).sort();
+  sel.innerHTML = '<option value="">Toutes extensions</option>' + exts.map(e=>`<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join('');
+  if (exts.includes(current)) sel.value = current;
+}
+
+function render(){
+  if (!firstLoadDone) {
+    grid.innerHTML = '';
+    emptyEl.style.display = 'block';
+    emptyEl.querySelector('.big').textContent = '⏳';
+    emptyEl.querySelector('h3').textContent = 'Chargement…';
+    emptyEl.querySelector('p').textContent = 'Connexion en cours.';
+    document.getElementById('collectionStats').innerHTML = '';
+    updateSyncUI();
+    return;
+  }
+  emptyEl.querySelector('.big').textContent = '🎴';
+  emptyEl.querySelector('h3').textContent = "Rien pour l'instant";
+  emptyEl.querySelector('p').textContent = 'Appuie sur le bouton pour ajouter ta première carte ou objet.';
+
+  const gameList = Object.values(cards).filter(c => gameOf(c) === currentGame);
+  const catList = gameList.filter(c => typeOf(c) === currentCat);
+  populateExtFilter(catList);
+
+  const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  const extF = document.getElementById('extFilter').value;
+  const collection_ = catList.filter(c => c.status !== 'vendu')
+    .filter(c => !q || (c.name||'').toLowerCase().includes(q))
+    .filter(c => !extF || c.extension === extF)
+    .sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+
+  grid.innerHTML = '';
+  collection_.forEach(c => grid.appendChild(cardEl(c,'collection')));
+  emptyEl.style.display = collection_.length ? 'none' : 'block';
+
+  let totalInvested=0, totalMarket=0, totalPotential=0, itemCount=0;
+  collection_.forEach(c=>{
+    const qty = Number(c.quantity)||1;
+    if (c.purchasePrice != null) totalInvested += Number(c.purchasePrice)*qty;
+    if (c.marketPrice != null) totalMarket += Number(c.marketPrice)*qty;
+    const p = profitPotential(c); if (p != null) totalPotential += p;
+    itemCount += qty;
+  });
+  document.getElementById('collectionStats').innerHTML = `
+    <div class="stat-card"><div class="label">${currentCat==='card'?'Cartes':'Objets'}</div><div class="value">${itemCount}</div></div>
+    <div class="stat-card"><div class="label">Investi</div><div class="value">${EUR.format(totalInvested)}</div></div>
+    <div class="stat-card"><div class="label">Valeur marché</div><div class="value">${EUR.format(totalMarket)}</div></div>
+    <div class="stat-card"><div class="label">Rentabilité potentielle</div><div class="value ${totalPotential>=0?'pos':'neg'}">${totalPotential>=0?'+':''}${EUR.format(totalPotential)}</div></div>
+  `;
+
+  const sold = catList.filter(c=>c.status==='vendu').sort((a,b)=> (b.soldAt||0)-(a.soldAt||0));
+  ventesGrid.innerHTML = '';
+  sold.forEach(c => ventesGrid.appendChild(cardEl(c,'ventes')));
+  ventesEmpty.style.display = sold.length ? 'none' : 'block';
+
+  let revenue=0, cost=0, profit=0;
+  sold.forEach(c=>{
+    const qty = Number(c.quantity)||1;
+    if (c.soldPrice!=null) revenue += Number(c.soldPrice);
+    if (c.purchasePrice!=null) cost += Number(c.purchasePrice)*qty;
+    const p = saleProfit(c); if (p!=null) profit += p;
+  });
+  document.getElementById('ventesStats').innerHTML = `
+    <div class="stat-card"><div class="label">Ventes réalisées</div><div class="value">${sold.length}</div></div>
+    <div class="stat-card"><div class="label">Total encaissé</div><div class="value">${EUR.format(revenue)}</div></div>
+    <div class="stat-card"><div class="label">Coût d'achat</div><div class="value">${EUR.format(cost)}</div></div>
+    <div class="stat-card"><div class="label">Bénéfice net</div><div class="value ${profit>=0?'pos':'neg'}">${profit>=0?'+':''}${EUR.format(profit)}</div></div>
+  `;
+  updateSyncUI();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('view-collection').style.display = tab==='collection' ? '' : 'none';
+    document.getElementById('view-ventes').style.display = tab==='ventes' ? '' : 'none';
+  });
+});
+document.getElementById('searchInput').addEventListener('input', render);
+document.getElementById('extFilter').addEventListener('change', render);
+
+const formOverlay = document.getElementById('formOverlay');
+const photoInput = document.getElementById('photoInput');
+const photoPick = document.getElementById('photoPick');
+const photoPrev = document.getElementById('photoPrev');
+const photoTxt = document.getElementById('photoTxt');
+
+document.getElementById('typeCardBtn').addEventListener('click', ()=> setFormType('card'));
+document.getElementById('typeItemBtn').addEventListener('click', ()=> setFormType('item'));
+function setFormType(t){
+  formType = t;
+  document.getElementById('typeCardBtn').classList.toggle('active', t==='card');
+  document.getElementById('typeItemBtn').classList.toggle('active', t==='item');
+}
+
+photoPick.addEventListener('click', ()=> photoInput.click());
+photoInput.addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  compressingPhoto = true;
+  photoPrev.innerHTML = '…';
+  photoTxt.textContent = 'Préparation de la photo…';
+  try {
+    const dataUrl = await compressImageFile(file);
+    pendingPhotoDataUrl = dataUrl;
+    photoPrev.innerHTML = `<img src="${dataUrl}">`;
+    photoTxt.textContent = 'Photo prête ✓ (touche pour changer)';
+  } catch(err) {
+    console.warn('compression failed', err);
+    toast('Photo illisible, réessaie');
+    photoPrev.innerHTML = '📷';
+    photoTxt.textContent = 'Touche pour choisir une photo';
+    pendingPhotoDataUrl = null;
+  } finally {
+    compressingPhoto = false;
+  }
+});
+
+function resetForm(){
+  editingId = null;
+  document.getElementById('formTitle').textContent = 'Ajouter';
+  document.getElementById('fName').value = '';
+  document.getElementById('fExt').value = '';
+  document.getElementById('fBuy').value = '';
+  document.getElementById('fQty').value = '1';
+  document.getElementById('fMarket').value = '';
+  document.getElementById('fPsa10').value = '';
+  document.getElementById('fNotes').value = '';
+  pendingPhotoDataUrl = null;
+  photoPrev.innerHTML = '📷';
+  photoTxt.textContent = 'Touche pour choisir une photo';
+  setFormType(currentCat);
+}
+
+document.getElementById('openAdd').addEventListener('click', ()=>{
+  resetForm();
+  showOverlay(formOverlay);
+});
+
+function openEdit(id){
+  const c = cards[id];
+  if (!c) return;
+  editingId = id;
+  document.getElementById('formTitle').textContent = 'Modifier';
+  document.getElementById('fName').value = c.name||'';
+  document.getElementById('fExt').value = c.extension||'';
+  document.getElementById('fBuy').value = c.purchasePrice ?? '';
+  document.getElementById('fQty').value = c.quantity || 1;
+  document.getElementById('fMarket').value = c.marketPrice ?? '';
+  document.getElementById('fPsa10').value = c.psa10Price ?? '';
+  document.getElementById('fNotes').value = c.notes || '';
+  setFormType(typeOf(c));
+  pendingPhotoDataUrl = c.photo || null;
+  if (c.photo) {
+    photoPrev.innerHTML = `<img src="${c.photo}">`;
+    photoTxt.textContent = 'Photo prête ✓ (touche pour changer)';
+  } else {
+    photoPrev.innerHTML = '📷';
+    photoTxt.textContent = 'Touche pour choisir une photo';
+  }
+  showOverlay(formOverlay);
+}
+
+function numOrNull(v){
+  if (v === '' || v === null || v === undefined) return null;
+  const n = Number(v);
+  return isNaN(n) ? null : n;
+}
+
+document.getElementById('cancelForm').addEventListener('click', ()=> hideOverlay(formOverlay));
+document.getElementById('saveForm').addEventListener('click', async ()=>{
+  const name = document.getElementById('fName').value.trim();
+  if (!name) { toast('Ajoute au moins un nom'); return; }
+  if (compressingPhoto) { toast('Attends une seconde, la photo se prépare…'); return; }
+
+  const saveBtn = document.getElementById('saveForm');
+  saveBtn.disabled = true; saveBtn.textContent = 'Enregistrement…';
+
+  const id = editingId || uid();
+  const existing = cards[id] || {};
+  const card = Object.assign({}, existing, {
+    id, name,
+    game: currentGame,
+    itemType: formType,
+    extension: document.getElementById('fExt').value.trim(),
+    purchasePrice: numOrNull(document.getElementById('fBuy').value),
+    quantity: Number(document.getElementById('fQty').value)||1,
+    marketPrice: numOrNull(document.getElementById('fMarket').value),
+    psa10Price: numOrNull(document.getElementById('fPsa10').value),
+    notes: document.getElementById('fNotes').value.trim(),
+    status: existing.status || 'collection',
+    createdAt: existing.createdAt || Date.now(),
+    updatedAt: Date.now(),
+  });
+  if (pendingPhotoDataUrl) card.photo = pendingPhotoDataUrl;
+
+  try {
+    await saveCardToServer(card);
+    cards[id] = card;
+    render();
+    hideOverlay(formOverlay);
+    toast(hasPendingWrites ? 'Enregistrée — envoi en cours…' : 'Enregistrée et sauvegardée ✓');
+  } catch(e) {
+    console.warn('save failed', e);
+    toast('⚠️ Échec de la sauvegarde' + errorLabel(e));
+  } finally {
+    saveBtn.disabled = false; saveBtn.textContent = 'Enregistrer';
+  }
+});
+
+const sellOverlay = document.getElementById('sellOverlay');
+function openSell(id){
+  sellingId = id;
+  document.getElementById('sPrice').value = '';
+  document.getElementById('sDate').value = new Date().toISOString().slice(0,10);
+  showOverlay(sellOverlay);
+}
+document.getElementById('cancelSell').addEventListener('click', ()=> hideOverlay(sellOverlay));
+document.getElementById('confirmSell').addEventListener('click', async ()=>{
+  const c = Object.assign({}, cards[sellingId]);
+  if (!c || !c.id) return;
+  c.status = 'vendu';
+  c.soldPrice = numOrNull(document.getElementById('sPrice').value);
+  c.soldDate = document.getElementById('sDate').value;
+  c.soldAt = Date.now();
+  c.updatedAt = Date.now();
+  const btn = document.getElementById('confirmSell');
+  btn.disabled = true; btn.textContent = 'Enregistrement…';
+  try {
+    await saveCardToServer(c);
+    cards[c.id] = c;
+    render();
+    hideOverlay(sellOverlay);
+    toast('Vente enregistrée ✓');
+  } catch(e) {
+    toast('⚠️ Échec' + errorLabel(e));
+  } finally {
+    btn.disabled = false; btn.textContent = 'Confirmer la vente';
+  }
+});
+
+const deleteOverlay = document.getElementById('deleteOverlay');
+function deleteCard(id){
+  deletingId = id;
+  showOverlay(deleteOverlay);
+}
+document.getElementById('cancelDelete').addEventListener('click', ()=>{
+  deletingId = null;
+  hideOverlay(deleteOverlay);
+});
+document.getElementById('confirmDelete').addEventListener('click', async ()=>{
+  const id = deletingId;
+  if (!id) { hideOverlay(deleteOverlay); return; }
+  const btn = document.getElementById('confirmDelete');
+  btn.disabled = true; btn.textContent = 'Suppression…';
+  try {
+    await deleteCardOnServer(id);
+    delete cards[id];
+    render();
+    hideOverlay(deleteOverlay);
+    toast('Supprimé');
+  } catch(e) {
+    toast('⚠️ Échec de la suppression' + errorLabel(e));
+  } finally {
+    btn.disabled = false; btn.textContent = 'Supprimer';
+    deletingId = null;
+  }
+});
+
+function showOverlay(el){ el.classList.add('show'); }
+function hideOverlay(el){ el.classList.remove('show'); }
+[formOverlay, sellOverlay, deleteOverlay].forEach(ov=>{
+  ov.addEventListener('click', (e)=>{ if (e.target === ov) hideOverlay(ov); });
+});
+
+applyGameTheme();
+render();
+</script>
+</body>
+</html>
