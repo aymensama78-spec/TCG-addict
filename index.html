@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PokéBinder</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎴</text></svg>">
+<title>TCGaddict</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🃏</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f4f1ea; --bg-elevated: #ffffff; --bg-soft: #eeeae1;
     --text: #241d16; --text-muted: #766c5c; --border: rgba(36,29,22,0.10);
     --shadow: 0 10px 30px rgba(36,29,22,0.08);
-    --red: #e3350d; --red-dark: #b8270a; --gold: #f4c542; --gold-dark: #d9a520;
+    --accent: #e3350d; --accent-dark: #b8270a; --accent2: #f4c542; --accent2-dark: #d9a520;
     --green: #1f9d55; --green-bg: rgba(31,157,85,0.12);
     --loss: #cc3333; --loss-bg: rgba(204,51,51,0.10);
     --card-bg: #ffffff; --radius: 18px; --radius-sm: 12px;
@@ -31,24 +31,38 @@
     --border: rgba(244,237,225,0.10); --shadow:0 10px 30px rgba(0,0,0,0.4); --card-bg:#241d16;
     --green-bg: rgba(31,157,85,0.18); --loss-bg: rgba(204,51,51,0.18);
   }
+
+  /* ---- Yu-Gi-Oh theme: dark navy/black + gold + purple, applied via [data-game] ---- */
+  html[data-game="yugioh"] {
+    --bg: #0b0710; --bg-elevated: #17101f; --bg-soft: #1f1729;
+    --text: #f1e9d8; --text-muted: #a595b8; --border: rgba(201,162,39,0.18);
+    --shadow: 0 10px 30px rgba(0,0,0,0.55);
+    --accent: #c9a227; --accent-dark: #9c7c15; --accent2: #6b2fb3; --accent2-dark: #4b1f80;
+    --green: #2fbf71; --green-bg: rgba(47,191,113,0.15);
+    --loss: #e04848; --loss-bg: rgba(224,72,72,0.15);
+    --card-bg: #17101f;
+    --font-display: 'Cinzel','Fredoka',serif;
+  }
+
   * { box-sizing: border-box; }
   html, body { margin:0; padding:0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height:100vh; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height:100vh; -webkit-tap-highlight-color: transparent; transition: background .25s ease, color .25s ease; }
   img { max-width:100%; display:block; }
   .app { max-width: 1100px; margin:0 auto; padding: 0 16px 100px; }
 
   header.top {
-    position: sticky; top:0; z-index:30; background: linear-gradient(135deg, var(--red), var(--red-dark));
+    position: sticky; top:0; z-index:30; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
     color:white; padding: 18px 16px 14px; margin:0 0 18px; border-radius: 0 0 22px 22px;
-    box-shadow: 0 8px 24px rgba(227,53,13,0.25);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25); transition: background .25s ease;
   }
-  .top-row { display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto; }
-  .brand { display:flex; align-items:center; gap:10px; }
-  .brand-ball { width:34px; height:34px; border-radius:50%; background: linear-gradient(180deg,#fff 50%, var(--red) 50%); border:2.5px solid var(--text); position:relative; flex-shrink:0; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
-  .brand-ball::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:12px; height:12px; border-radius:50%; background:#fff; border:2.5px solid var(--text); }
-  .brand h1 { font-family: var(--font-display); font-size:21px; margin:0; letter-spacing:0.3px; }
+  html[data-game="yugioh"] header.top { color: #f1e9d8; }
+  .top-row { display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto; gap:10px; }
+  .brand { display:flex; align-items:center; gap:10px; min-width:0; }
+  .menu-btn { flex-shrink:0; width:38px; height:38px; border-radius:11px; border:none; background: rgba(255,255,255,0.18); color:#fff; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .game-badge { width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; background: rgba(255,255,255,0.18); }
+  .brand h1 { font-family: var(--font-display); font-size:19px; margin:0; letter-spacing:0.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .brand span.tag { display:block; font-size:11px; opacity:0.85; font-weight:500; margin-top:1px; }
-  .sync-pill { display:flex; align-items:center; gap:6px; background: rgba(255,255,255,0.16); padding:6px 11px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .sync-pill { display:flex; align-items:center; gap:6px; background: rgba(255,255,255,0.16); padding:6px 10px; border-radius:999px; font-size:11.5px; font-weight:600; white-space:nowrap; flex-shrink:0; }
   .dot { width:8px; height:8px; border-radius:50%; background:#5fe38a; box-shadow:0 0 0 3px rgba(95,227,138,0.25); flex-shrink:0; }
   .dot.off { background:#f4c542; box-shadow:0 0 0 3px rgba(244,197,66,0.25); }
   .dot.pending { background:#f4c542; animation: pulse 1.3s infinite; }
@@ -56,9 +70,15 @@
 
   .tabs { display:flex; gap:6px; max-width:1100px; margin:14px auto 0; padding:0 16px; }
   .tab-btn { flex:1; text-align:center; padding:9px 6px; border-radius:999px; background: rgba(255,255,255,0.14); color: rgba(255,255,255,0.85); font-weight:600; font-size:13.5px; border:none; cursor:pointer; }
-  .tab-btn.active { background:#fff; color: var(--red-dark); }
+  .tab-btn.active { background:#fff; color: var(--accent-dark); }
+  html[data-game="yugioh"] .tab-btn.active { background: var(--accent); color: #0b0710; }
 
-  #dbWarning { display:none; background:var(--gold); color:#4a3400; padding:10px 14px; border-radius:12px; font-size:12.5px; font-weight:600; margin:0 0 14px; line-height:1.4; }
+  .cat-tabs { display:flex; gap:8px; margin: 0 0 16px; }
+  .cat-btn { flex:1; text-align:center; padding:10px 8px; border-radius: var(--radius-sm); background: var(--bg-elevated); border:1.5px solid var(--border); color: var(--text-muted); font-weight:700; font-size:13.5px; cursor:pointer; }
+  .cat-btn.active { border-color: var(--accent); color: var(--text); background: var(--bg-soft); }
+
+  #dbWarning { display:none; background:var(--accent2); color:#2a1a00; padding:10px 14px; border-radius:12px; font-size:12.5px; font-weight:600; margin:0 0 14px; line-height:1.4; }
+  html[data-game="yugioh"] #dbWarning { color:#fff2cc; }
 
   .toolbar { display:flex; gap:10px; margin:4px 0 16px; flex-wrap:wrap; }
   .search-wrap { position:relative; flex:1; min-width:180px; }
@@ -80,7 +100,6 @@
   .card-photo .placeholder { opacity:0.25; width:44%; }
   .sold-ribbon { position:absolute; top:9px; right:-28px; transform:rotate(40deg); background: var(--green); color:#fff; font-size:10.5px; font-weight:700; padding:3px 32px; letter-spacing:0.5px; }
   .qty-badge { position:absolute; bottom:7px; right:7px; background: rgba(0,0,0,0.65); color:#fff; font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; }
-  .pending-badge { position:absolute; top:7px; left:7px; background: rgba(244,197,66,0.92); color:#4a3400; font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; }
   .card-body { padding:10px 12px 12px; display:flex; flex-direction:column; gap:5px; flex:1; }
   .card-name { font-weight:700; font-size:14px; line-height:1.25; }
   .card-ext { font-size:11.5px; color: var(--text-muted); font-weight:500; }
@@ -91,10 +110,12 @@
   .profit-badge.pos { background: var(--green-bg); color: var(--green); }
   .profit-badge.neg { background: var(--loss-bg); color: var(--loss); }
   .profit-badge.neutral { background: var(--bg-soft); color: var(--text-muted); }
-  .psa10-line { font-size:11.5px; color: var(--gold-dark); font-weight:600; display:flex; gap:4px; align-items:center; }
+  .psa10-line { font-size:11.5px; color: var(--accent2-dark); font-weight:600; display:flex; gap:4px; align-items:center; }
+  html[data-game="yugioh"] .psa10-line { color: var(--accent); }
   .card-actions { display:flex; gap:6px; margin-top:8px; }
   .mini-btn { flex:1; border:none; border-radius:9px; padding:7px 4px; font-size:11.5px; font-weight:600; cursor:pointer; font-family: var(--font-body); }
-  .mini-btn.sell { background: var(--gold); color:#4a3400; }
+  .mini-btn.sell { background: var(--accent2); color:#2a1a00; }
+  html[data-game="yugioh"] .mini-btn.sell { color:#fff; }
   .mini-btn.edit { background: var(--bg-soft); color: var(--text); }
   .mini-btn.del { background: var(--loss-bg); color: var(--loss); flex: 0 0 34px; }
 
@@ -102,7 +123,7 @@
   .empty-state .big { font-size:44px; margin-bottom:10px; }
   .empty-state h3 { font-family: var(--font-display); color: var(--text); margin:0 0 6px; }
 
-  .fab { position:fixed; right:20px; bottom:26px; z-index:40; width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; background: linear-gradient(135deg, var(--red), var(--red-dark)); color:#fff; font-size:28px; box-shadow:0 10px 24px rgba(227,53,13,0.4); display:flex; align-items:center; justify-content:center; }
+  .fab { position:fixed; right:20px; bottom:26px; z-index:40; width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color:#fff; font-size:28px; box-shadow:0 10px 24px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; }
   .fab:active { transform: scale(0.94); }
 
   .overlay { position:fixed; inset:0; background: rgba(20,15,10,0.55); z-index:50; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition: opacity .18s ease; }
@@ -117,13 +138,16 @@
   .field input, .field select, .field textarea { width:100%; padding:11px 12px; border-radius:11px; border:1px solid var(--border); background: var(--bg-soft); color: var(--text); font-family: var(--font-body); font-size:14.5px; }
   .field textarea { resize:vertical; min-height:54px; }
   .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .type-toggle { display:flex; gap:8px; }
+  .type-btn { flex:1; padding:10px; border-radius:11px; border:1.5px solid var(--border); background: var(--bg-soft); color: var(--text-muted); font-weight:700; font-size:13.5px; cursor:pointer; }
+  .type-btn.active { border-color: var(--accent); color: var(--text); }
   .photo-pick { display:flex; align-items:center; gap:12px; padding:10px; border-radius:12px; background: var(--bg-soft); border:1.5px dashed var(--border); cursor:pointer; }
   .photo-pick .prev { width:52px; height:70px; border-radius:8px; overflow:hidden; background:#ddd; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:22px; }
   .photo-pick .prev img { width:100%; height:100%; object-fit:cover; }
   .photo-pick .txt { font-size:13px; font-weight:600; color: var(--text-muted); }
   .modal-actions { display:flex; gap:10px; margin-top:18px; }
   .btn { border:none; border-radius:12px; padding:13px 16px; font-weight:700; font-size:14.5px; cursor:pointer; font-family: var(--font-body); flex:1; }
-  .btn.primary { background: linear-gradient(135deg, var(--red), var(--red-dark)); color:#fff; }
+  .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color:#fff; }
   .btn.primary:disabled { opacity:0.6; }
   .btn.ghost { background: var(--bg-soft); color: var(--text); flex:0 0 auto; }
   .hint { font-size:11.5px; color: var(--text-muted); margin-top:-6px; margin-bottom:12px; line-height:1.4; }
@@ -132,15 +156,37 @@
   .toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
   ::-webkit-scrollbar { width:8px; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius:8px; }
+
+  /* ---- game drawer ---- */
+  .drawer-overlay { position:fixed; inset:0; background: rgba(0,0,0,0.5); z-index:70; opacity:0; pointer-events:none; transition: opacity .2s ease; }
+  .drawer-overlay.show { opacity:1; pointer-events:auto; }
+  .drawer { position:fixed; top:0; left:0; bottom:0; width: 78%; max-width:300px; background: var(--bg-elevated); z-index:71; transform: translateX(-100%); transition: transform .22s ease; box-shadow: 4px 0 24px rgba(0,0,0,0.3); overflow-y:auto; }
+  .drawer-overlay.show .drawer { transform: translateX(0); }
+  .drawer-head { padding: 20px 18px 14px; font-family: var(--font-display); font-size: 19px; color: var(--text); border-bottom:1px solid var(--border); }
+  .drawer-list { padding: 10px; }
+  .drawer-item { display:flex; align-items:center; gap:12px; padding: 13px 12px; border-radius: 12px; cursor:pointer; margin-bottom:4px; }
+  .drawer-item:hover { background: var(--bg-soft); }
+  .drawer-item.active { background: var(--bg-soft); border:1.5px solid var(--accent); }
+  .drawer-item .icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+  .drawer-item .info b { display:block; font-size:14px; }
+  .drawer-item .info span { display:block; font-size:11.5px; color: var(--text-muted); }
 </style>
 </head>
 <body>
 
+<div class="drawer-overlay" id="drawerOverlay">
+  <div class="drawer">
+    <div class="drawer-head">🃏 TCGaddict</div>
+    <div class="drawer-list" id="drawerList"></div>
+  </div>
+</div>
+
 <header class="top">
   <div class="top-row">
     <div class="brand">
-      <div class="brand-ball"></div>
-      <h1>PokéBinder<span class="tag" id="syncSub">Chargement…</span></h1>
+      <button class="menu-btn" id="menuBtn" title="Changer de jeu">☰</button>
+      <div class="game-badge" id="gameBadge">🔴</div>
+      <h1>TCGaddict<span class="tag" id="syncSub">Chargement…</span></h1>
     </div>
     <div class="sync-pill" id="syncPill"><span class="dot" id="syncDot"></span><span id="syncLabel">…</span></div>
   </div>
@@ -153,11 +199,16 @@
 <div class="app">
   <div id="dbWarning">⚠️ Connexion à la base de données impossible. Vérifie ta connexion internet et recharge la page.</div>
 
+  <div class="cat-tabs">
+    <button class="cat-btn active" data-cat="card">🃏 Cartes</button>
+    <button class="cat-btn" data-cat="item">🎁 Objets</button>
+  </div>
+
   <div id="view-collection">
     <div class="toolbar">
       <div class="search-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <input id="searchInput" placeholder="Rechercher une carte…">
+        <input id="searchInput" placeholder="Rechercher…">
       </div>
       <select class="filter" id="extFilter"><option value="">Toutes extensions</option></select>
     </div>
@@ -165,8 +216,8 @@
     <div class="grid" id="collectionGrid"></div>
     <div class="empty-state" id="collectionEmpty" style="display:none;">
       <div class="big">🎴</div>
-      <h3>Aucune carte pour l'instant</h3>
-      <p>Appuie sur le bouton rouge pour ajouter ta première carte ou objet.</p>
+      <h3>Rien pour l'instant</h3>
+      <p>Appuie sur le bouton pour ajouter ta première carte ou objet.</p>
     </div>
   </div>
 
@@ -176,16 +227,23 @@
     <div class="empty-state" id="ventesEmpty" style="display:none;">
       <div class="big">💸</div>
       <h3>Aucune vente enregistrée</h3>
-      <p>Marque une carte comme vendue depuis l'onglet Collection pour la voir ici.</p>
+      <p>Marque un élément comme vendu depuis l'onglet Collection pour le voir ici.</p>
     </div>
   </div>
 </div>
 
-<button class="fab" id="openAdd" title="Ajouter une carte">＋</button>
+<button class="fab" id="openAdd" title="Ajouter">＋</button>
 
 <div class="overlay" id="formOverlay">
   <div class="modal">
-    <h2 id="formTitle">Ajouter une carte</h2>
+    <h2 id="formTitle">Ajouter</h2>
+    <div class="field">
+      <label>Type</label>
+      <div class="type-toggle">
+        <button type="button" class="type-btn active" id="typeCardBtn" data-type="card">🃏 Carte</button>
+        <button type="button" class="type-btn" id="typeItemBtn" data-type="item">🎁 Objet</button>
+      </div>
+    </div>
     <div class="field">
       <label>Photo (depuis ta galerie)</label>
       <div class="photo-pick" id="photoPick">
@@ -195,23 +253,13 @@
       <input type="file" accept="image/*" id="photoInput" style="display:none;">
     </div>
     <div class="field">
-      <label>Nom de la carte / de l'objet</label>
+      <label>Nom</label>
       <input id="fName" placeholder="ex. Dracaufeu ex">
     </div>
     <div class="field">
       <label>Extension</label>
-      <input id="fExt" placeholder="ex. 151, Évolutions Prismatiques…" list="extSuggest">
-      <datalist id="extSuggest">
-        <option value="Écarlate et Violet"></option>
-        <option value="Évolutions Prismatiques"></option>
-        <option value="151"></option>
-        <option value="Flammes Obsidiennes"></option>
-        <option value="Fable Nébuleuse"></option>
-        <option value="Étincelles Déferlantes"></option>
-        <option value="Destinées de Paldea"></option>
-        <option value="Épée et Bouclier"></option>
-        <option value="Soleil et Lune"></option>
-      </datalist>
+      <input id="fExt" placeholder="ex. 151…" list="extSuggest">
+      <datalist id="extSuggest"></datalist>
     </div>
     <div class="row2">
       <div class="field"><label>Prix d'achat (€)</label><input id="fBuy" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
@@ -244,7 +292,7 @@
 
 <div class="overlay" id="deleteOverlay">
   <div class="modal">
-    <h2>Supprimer cette carte ?</h2>
+    <h2>Supprimer ?</h2>
     <p style="font-size:13.5px; color:var(--text-muted); margin:-6px 0 4px;">Cette action est définitive.</p>
     <div class="modal-actions">
       <button class="btn ghost" id="cancelDelete">Annuler</button>
@@ -276,6 +324,18 @@ const db = getFirestore(app);
 try { await enableIndexedDbPersistence(db); } catch(e) { console.warn('offline persistence not available', e); }
 
 const EUR = new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR' });
+
+const GAMES = {
+  pokemon: {
+    label: 'Pokémon', icon: '🔴', theme: 'pokemon',
+    extensions: ['Écarlate et Violet','Évolutions Prismatiques','151','Flammes Obsidiennes','Fable Nébuleuse','Étincelles Déferlantes','Destinées de Paldea','Épée et Bouclier','Soleil et Lune']
+  },
+  yugioh: {
+    label: 'Yu-Gi-Oh!', icon: '🟣', theme: 'yugioh',
+    extensions: ['Duelist Nexus','Légende de l\'Œil Bleu','Âge de la Destruction','Rage of the Abyss','Ancienne Prophétie','Battles of Legend','Structure Deck','25th Anniversary']
+  }
+};
+
 let cards = {};
 let firstLoadDone = false;
 let dbReady = true;
@@ -283,6 +343,10 @@ let hasPendingWrites = false;
 let editingId = null, sellingId = null, deletingId = null;
 let pendingPhotoDataUrl = null;
 let compressingPhoto = false;
+let currentGame = localStorage.getItem('tcgaddict_game') || 'pokemon';
+if (!GAMES[currentGame]) currentGame = 'pokemon';
+let currentCat = 'card';
+let formType = 'card';
 
 function uid(){
   if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -313,16 +377,58 @@ function updateSyncUI(){
     warn.style.display = 'none';
   } else {
     dot.className = 'dot'; label.textContent = 'Synchronisé';
-    sub.textContent = 'À jour sur tous tes appareils';
+    sub.textContent = GAMES[currentGame].label;
     warn.style.display = 'none';
   }
 }
 
-// ---------- live subscription (works offline too, via IndexedDB persistence) ----------
+// ---------- game switching ----------
+function applyGameTheme(){
+  document.documentElement.setAttribute('data-game', GAMES[currentGame].theme);
+  document.getElementById('gameBadge').textContent = GAMES[currentGame].icon;
+  const extList = document.getElementById('extSuggest');
+  extList.innerHTML = GAMES[currentGame].extensions.map(e=>`<option value="${escapeHtml(e)}"></option>`).join('');
+  updateSyncUI();
+}
+function renderDrawer(){
+  const list = document.getElementById('drawerList');
+  list.innerHTML = '';
+  Object.keys(GAMES).forEach(key=>{
+    const g = GAMES[key];
+    const div = document.createElement('div');
+    div.className = 'drawer-item' + (key===currentGame ? ' active' : '');
+    div.innerHTML = `<div class="icon">${g.icon}</div><div class="info"><b>${g.label}</b><span>${key==='pokemon'?'Cartes & objets Pokémon':'Cartes & objets Yu-Gi-Oh!'}</span></div>`;
+    div.addEventListener('click', ()=>{
+      currentGame = key;
+      localStorage.setItem('tcgaddict_game', key);
+      applyGameTheme();
+      renderDrawer();
+      render();
+      closeDrawer();
+    });
+    list.appendChild(div);
+  });
+}
+const drawerOverlay = document.getElementById('drawerOverlay');
+function openDrawer(){ renderDrawer(); drawerOverlay.classList.add('show'); }
+function closeDrawer(){ drawerOverlay.classList.remove('show'); }
+document.getElementById('menuBtn').addEventListener('click', openDrawer);
+drawerOverlay.addEventListener('click', (e)=>{ if (e.target === drawerOverlay) closeDrawer(); });
+
+// ---------- category tabs (Cartes / Objets) ----------
+document.querySelectorAll('.cat-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    render();
+  });
+});
+
+// ---------- live subscription ----------
 const cardsCol = collection(db, 'cards');
 onSnapshot(cardsCol, { includeMetadataChanges: true }, (snap)=>{
   const fresh = {};
-  let anyPending = false;
   snap.forEach(d=>{
     const data = d.data();
     if (data && !data.deleted) fresh[d.id] = Object.assign({id: d.id}, data);
@@ -347,14 +453,13 @@ async function saveCardToServer(card){
 async function deleteCardOnServer(id){
   await deleteDoc(doc(db, 'cards', id));
 }
-
 function errorLabel(e){
   if (!e) return '';
   const code = e.code || (e.message ? e.message.slice(0,50) : 'inconnu');
   return ' (code: ' + code + ')';
 }
 
-// ---------- image compression (Firestore allows docs up to 1 MiB, plenty of room) ----------
+// ---------- image compression ----------
 function compressOnce(imgEl, maxDim, quality){
   let { width, height } = imgEl;
   if (width > height && width > maxDim) { height = Math.round(height*maxDim/width); width = maxDim; }
@@ -463,6 +568,9 @@ function cardEl(card, mode){
   return div;
 }
 
+function gameOf(c){ return c.game || 'pokemon'; }
+function typeOf(c){ return c.itemType || 'card'; }
+
 function populateExtFilter(list){
   const sel = document.getElementById('extFilter');
   const current = sel.value;
@@ -476,22 +584,23 @@ function render(){
     grid.innerHTML = '';
     emptyEl.style.display = 'block';
     emptyEl.querySelector('.big').textContent = '⏳';
-    emptyEl.querySelector('h3').textContent = 'Chargement de ta collection…';
+    emptyEl.querySelector('h3').textContent = 'Chargement…';
     emptyEl.querySelector('p').textContent = 'Connexion en cours.';
     document.getElementById('collectionStats').innerHTML = '';
     updateSyncUI();
     return;
   }
   emptyEl.querySelector('.big').textContent = '🎴';
-  emptyEl.querySelector('h3').textContent = "Aucune carte pour l'instant";
-  emptyEl.querySelector('p').textContent = 'Appuie sur le bouton rouge pour ajouter ta première carte ou objet.';
+  emptyEl.querySelector('h3').textContent = "Rien pour l'instant";
+  emptyEl.querySelector('p').textContent = 'Appuie sur le bouton pour ajouter ta première carte ou objet.';
 
-  const list = Object.values(cards);
-  populateExtFilter(list);
+  const gameList = Object.values(cards).filter(c => gameOf(c) === currentGame);
+  const catList = gameList.filter(c => typeOf(c) === currentCat);
+  populateExtFilter(catList);
 
   const q = (document.getElementById('searchInput').value||'').toLowerCase();
   const extF = document.getElementById('extFilter').value;
-  const collection_ = list.filter(c => c.status !== 'vendu')
+  const collection_ = catList.filter(c => c.status !== 'vendu')
     .filter(c => !q || (c.name||'').toLowerCase().includes(q))
     .filter(c => !extF || c.extension === extF)
     .sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
@@ -509,13 +618,13 @@ function render(){
     itemCount += qty;
   });
   document.getElementById('collectionStats').innerHTML = `
-    <div class="stat-card"><div class="label">Cartes / objets</div><div class="value">${itemCount}</div></div>
+    <div class="stat-card"><div class="label">${currentCat==='card'?'Cartes':'Objets'}</div><div class="value">${itemCount}</div></div>
     <div class="stat-card"><div class="label">Investi</div><div class="value">${EUR.format(totalInvested)}</div></div>
     <div class="stat-card"><div class="label">Valeur marché</div><div class="value">${EUR.format(totalMarket)}</div></div>
     <div class="stat-card"><div class="label">Rentabilité potentielle</div><div class="value ${totalPotential>=0?'pos':'neg'}">${totalPotential>=0?'+':''}${EUR.format(totalPotential)}</div></div>
   `;
 
-  const sold = list.filter(c=>c.status==='vendu').sort((a,b)=> (b.soldAt||0)-(a.soldAt||0));
+  const sold = catList.filter(c=>c.status==='vendu').sort((a,b)=> (b.soldAt||0)-(a.soldAt||0));
   ventesGrid.innerHTML = '';
   sold.forEach(c => ventesGrid.appendChild(cardEl(c,'ventes')));
   ventesEmpty.style.display = sold.length ? 'none' : 'block';
@@ -554,6 +663,14 @@ const photoPick = document.getElementById('photoPick');
 const photoPrev = document.getElementById('photoPrev');
 const photoTxt = document.getElementById('photoTxt');
 
+document.getElementById('typeCardBtn').addEventListener('click', ()=> setFormType('card'));
+document.getElementById('typeItemBtn').addEventListener('click', ()=> setFormType('item'));
+function setFormType(t){
+  formType = t;
+  document.getElementById('typeCardBtn').classList.toggle('active', t==='card');
+  document.getElementById('typeItemBtn').classList.toggle('active', t==='item');
+}
+
 photoPick.addEventListener('click', ()=> photoInput.click());
 photoInput.addEventListener('change', async (e)=>{
   const file = e.target.files[0];
@@ -579,7 +696,7 @@ photoInput.addEventListener('change', async (e)=>{
 
 function resetForm(){
   editingId = null;
-  document.getElementById('formTitle').textContent = 'Ajouter une carte';
+  document.getElementById('formTitle').textContent = 'Ajouter';
   document.getElementById('fName').value = '';
   document.getElementById('fExt').value = '';
   document.getElementById('fBuy').value = '';
@@ -590,6 +707,7 @@ function resetForm(){
   pendingPhotoDataUrl = null;
   photoPrev.innerHTML = '📷';
   photoTxt.textContent = 'Touche pour choisir une photo';
+  setFormType(currentCat);
 }
 
 document.getElementById('openAdd').addEventListener('click', ()=>{
@@ -609,6 +727,7 @@ function openEdit(id){
   document.getElementById('fMarket').value = c.marketPrice ?? '';
   document.getElementById('fPsa10').value = c.psa10Price ?? '';
   document.getElementById('fNotes').value = c.notes || '';
+  setFormType(typeOf(c));
   pendingPhotoDataUrl = c.photo || null;
   if (c.photo) {
     photoPrev.innerHTML = `<img src="${c.photo}">`;
@@ -639,6 +758,8 @@ document.getElementById('saveForm').addEventListener('click', async ()=>{
   const existing = cards[id] || {};
   const card = Object.assign({}, existing, {
     id, name,
+    game: currentGame,
+    itemType: formType,
     extension: document.getElementById('fExt').value.trim(),
     purchasePrice: numOrNull(document.getElementById('fBuy').value),
     quantity: Number(document.getElementById('fQty').value)||1,
@@ -715,7 +836,7 @@ document.getElementById('confirmDelete').addEventListener('click', async ()=>{
     delete cards[id];
     render();
     hideOverlay(deleteOverlay);
-    toast('Carte supprimée');
+    toast('Supprimé');
   } catch(e) {
     toast('⚠️ Échec de la suppression' + errorLabel(e));
   } finally {
@@ -730,6 +851,7 @@ function hideOverlay(el){ el.classList.remove('show'); }
   ov.addEventListener('click', (e)=>{ if (e.target === ov) hideOverlay(ov); });
 });
 
+applyGameTheme();
 render();
 </script>
 </body>
